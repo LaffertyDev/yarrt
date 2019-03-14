@@ -1,7 +1,7 @@
 use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign, MulAssign};
 
 #[derive(Debug, PartialEq)]
-struct vec3 {
+pub struct vec3 {
     e0: f32,
     e1: f32,
     e2: f32,
@@ -9,29 +9,53 @@ struct vec3 {
 
 
 impl vec3 {
-    fn new(x: f32, y: f32, z: f32) -> Self {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         vec3 { e0: x, e1: y, e2: z}
     }
 
-    fn magnitude(&self) -> f32 {
+    pub fn magnitude(&self) -> f32 {
         return (self.e0.powi(2) + self.e1.powi(2) + self.e2.powi(2)).sqrt();
     }
 
-    fn unit_vector(&self) -> vec3 {
+    pub fn unit_vector(&self) -> vec3 {
         let mag = self.magnitude();
         return self / mag;
     }
 
-    fn dot(&self, other: &vec3) -> f32 {
+    pub fn dot(&self, other: &vec3) -> f32 {
         return self.e0 * other.e0 + self.e1 * other.e1 + self.e2 * other.e2;
     }
 
-    fn cross(&self, other: &vec3) -> vec3 {
+    pub fn cross(&self, other: &vec3) -> vec3 {
         vec3 {
             e0: self.e1 * other.e2 - self.e2 * other.e1,
             e1: -(self.e0 * other.e2 - self.e2 * other.e0),
             e2: self.e0 * other.e1 - other.e1 * self.e0
         }
+    }
+    
+    pub fn x(&self) -> f32 {
+        self.e0
+    }
+    
+    pub fn y(&self) -> f32 {
+        self.e1
+    }
+    
+    pub fn z(&self) -> f32 {
+        self.e2
+    }
+    
+    pub fn r(&self) -> f32 {
+        self.e0
+    }
+    
+    pub fn g(&self) -> f32 {
+        self.e1
+    }
+    
+    pub fn b(&self) -> f32 {
+        self.e2
     }
 }
 
