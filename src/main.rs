@@ -1,3 +1,5 @@
+mod vector;
+
 fn main() {
     let num_rows = 200;
     let num_cols = 100;
