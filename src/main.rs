@@ -6,7 +6,7 @@ fn main() {
     println!("P3\n{} {}\n255", num_rows, num_cols);
     for y in (0..num_cols).rev() {
         for x in 0..num_rows {
-            let vec = vector::vec3::new(
+            let vec = vector::Vec3::new(
                 x as f32 / num_rows as f32,
                 y as f32 / num_cols as f32,
                 0.2f32
