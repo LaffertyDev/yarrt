@@ -22,8 +22,8 @@ impl Vec3 {
         return vector / mag;
     }
 
-    pub fn dot(&self, other: &Vec3) -> f32 {
-        return self.e0 * other.e0 + self.e1 * other.e1 + self.e2 * other.e2;
+    pub fn dot(lhs: &Vec3, rhs: &Vec3) -> f32 {
+        return lhs.e0 * rhs.e0 + lhs.e1 * rhs.e1 + lhs.e2 * rhs.e2;
     }
 
     pub fn cross(&self, other: &Vec3) -> Vec3 {
