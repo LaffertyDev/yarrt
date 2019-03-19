@@ -175,3 +175,35 @@ impl DivAssign for Vec3 {
         self.e2 /= other.e2;
     }
 }
+
+impl SubAssign<f32> for Vec3 {
+    fn sub_assign(&mut self, other: f32) {
+        self.e0 -= other;
+        self.e1 -= other;
+        self.e2 -= other;
+    }
+}
+
+impl AddAssign<f32> for Vec3 {
+    fn add_assign(&mut self, other: f32) {
+        self.e0 += other;
+        self.e1 += other;
+        self.e2 += other;
+    }
+}
+
+impl MulAssign<f32> for Vec3 {
+    fn mul_assign(&mut self, other: f32) {
+        self.e0 *= other;
+        self.e1 *= other;
+        self.e2 *= other;
+    }
+}
+
+impl DivAssign<f32> for Vec3 {
+    fn div_assign(&mut self, other: f32) {
+        self.e0 /= other;
+        self.e1 /= other;
+        self.e2 /= other;
+    }
+}

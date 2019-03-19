@@ -4,7 +4,7 @@ mod ray;
 use vector::Vec3;
 use ray::Ray;
 
-fn is_in_sphere(ray: &Ray, sphere_center: &Vec3, radius: f32) -> bool {
+fn is_in_sphere(ray: &Ray, sphere_center: &Vec3, radius: f32) -> f32 {
     // The book was really hard to unpack for this part. I struggled unpacking the algebra
     // Basically, we're determining if the "Ray" along ALL values of T will hit a sphere at point "sphere_center"
 
@@ -26,7 +26,7 @@ fn is_in_sphere(ray: &Ray, sphere_center: &Vec3, radius: f32) -> bool {
 
     // I forgot about the quadratic behavior, but reading up on wikipedia got me back up to speed: https://en.wikipedia.org/wiki/Quadratic_formula#Geometrical_significance
     // Essentially, the number of solutions to the formula are given by b^2 - 4ac
-    let sphere_origin_vector = sphere_center - &ray.origin();
+    let sphere_origin_vector = ray.origin() - &sphere_center;
     let a = Vec3::dot(&ray.direction(), &ray.direction());
     let b = 2f32 * Vec3::dot(ray.direction(), &sphere_origin_vector);
     let c = Vec3::dot(&sphere_origin_vector, &sphere_origin_vector) - radius * radius;
@@ -35,12 +35,23 @@ fn is_in_sphere(ray: &Ray, sphere_center: &Vec3, radius: f32) -> bool {
     // negative means no real solution
     // 0 means the ray does not hit Sphere at center vector with radius
     // more than 0 means that many hits (frankly, one or two)
-    determinant > 0f32
+    if determinant < 0f32 {
+        return -1f32; // no real number
+    }
+
+    return (-b - determinant.sqrt()) / 2f32 * a;
 }
 
 fn color(ray: &Ray) -> Vec3 {
-    if self::is_in_sphere(ray, &Vec3::new(0f32, 0f32, -1f32), 0.5) {
-        return Vec3::new(1f32, 0f32, 0f32);
+    let circle_origin = Vec3::new(0f32, 0f32, -1f32);
+    let time_ray_hit = self::is_in_sphere(ray, &circle_origin, 0.5);
+    if time_ray_hit > 0f32 {
+        let point_at_hit = ray.point_at_time(time_ray_hit);
+        let mut normal_vector = vector::Vec3::unit_vector(&(&point_at_hit - &circle_origin));
+        // move [-1, 1] to [0, 1]
+        normal_vector += 1f32;
+        normal_vector /= 2f32;
+        return normal_vector;
     }
 
     let ray_direction_unit = Vec3::unit_vector(&ray.direction());

@@ -14,7 +14,7 @@ impl Ray {
     }
 
     pub fn point_at_time(&self, t: f32) -> Vec3 {
-        (&self.origin * t)
+        (&self.origin + &(&self.direction * t))
     }
 
     pub fn origin(&self) -> &Vec3 {
