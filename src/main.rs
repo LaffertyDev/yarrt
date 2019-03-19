@@ -1,62 +1,20 @@
-mod vector;
+mod hitable;
 mod ray;
+mod vector;
 
-use vector::Vec3;
 use ray::Ray;
+use vector::Vec3;
+use hitable::*;
 
-fn is_in_sphere(ray: &Ray, sphere_center: &Vec3, radius: f32) -> f32 {
-    // The book was really hard to unpack for this part. I struggled unpacking the algebra
-    // Basically, we're determining if the "Ray" along ALL values of T will hit a sphere at point "sphere_center"
-
-    // We have a formula for "is this point (x,y,z) on a sphere surface" which is given as X*X + Y*Y + Z*Z = R * R
-    // Then we determine the formula for "is this point P (x,y,z) on a sphere surface centered at sphere_center", given as (point - sphere_center) = R*R
-        // note, book rewrites this into dot format
-        // this is handy, given a "Dot Product" is "The relevant part of the vector applied to another vector"
-        // so Dot(point - sphere_center, point - sphere_center) = R*R
-    // Where "R" is the radius of the sphere
-
-    // so, a ray is ray_point(t) = ray_origin_vec + ray_direction_vec * t
-    // we now want to plug that into the formula, essentially getting us "Given time T, does this ray hit this sphere"
-    // substituting the ray formula for our "point", we get a new formula
-    // dot ( ray__origin_vec + ray_direction_vec * t - sphere_center, ray_origin_vec + ray_direction_vec * t - sphere_center)
-    // which, expanded, gives us a quadratic formula!
-    // t^2 * dot (ray_direction_vec, ray_direction_vec) + 2*t * dot ( ray_direction_vec, sphere_center - ray_origin_vec) + dot ( ray_origin_vec, ray_origin_vec) - R^2 = 0
-    //                  THIS IS A                                       THIS IS B                                                   THIS IS C
-    // (Note, we moved R to set equation to 0)
-
-    // I forgot about the quadratic behavior, but reading up on wikipedia got me back up to speed: https://en.wikipedia.org/wiki/Quadratic_formula#Geometrical_significance
-    // Essentially, the number of solutions to the formula are given by b^2 - 4ac
-    let sphere_origin_vector = ray.origin() - &sphere_center;
-    let a = Vec3::dot(&ray.direction(), &ray.direction());
-    let b = 2f32 * Vec3::dot(ray.direction(), &sphere_origin_vector);
-    let c = Vec3::dot(&sphere_origin_vector, &sphere_origin_vector) - radius * radius;
-
-    let determinant = b*b - 4f32 * a * c;
-    // negative means no real solution
-    // 0 means the ray does not hit Sphere at center vector with radius
-    // more than 0 means that many hits (frankly, one or two)
-    if determinant < 0f32 {
-        return -1f32; // no real number
+fn color(ray: &Ray, world: &HitableList) -> Vec3 {
+    if let Some(hit_record) = world.hit(&ray, 0f32, std::f32::MAX) {
+        let colorized_normal = &(&hit_record.normal + 1f32) / 2f32;
+        return colorized_normal;
+    } else {
+        let ray_direction_unit = Vec3::unit_vector(&ray.direction());
+        let t = 0.5f32 * ray_direction_unit.y() + 1f32;
+        return &(&Vec3::new(1.0, 1.0, 1.0) * (1f32 - t)) + &(&Vec3::new(0.5, 0.7, 1.0) * t);
     }
-
-    return (-b - determinant.sqrt()) / 2f32 * a;
-}
-
-fn color(ray: &Ray) -> Vec3 {
-    let circle_origin = Vec3::new(0f32, 0f32, -1f32);
-    let time_ray_hit = self::is_in_sphere(ray, &circle_origin, 0.5);
-    if time_ray_hit > 0f32 {
-        let point_at_hit = ray.point_at_time(time_ray_hit);
-        let mut normal_vector = vector::Vec3::unit_vector(&(&point_at_hit - &circle_origin));
-        // move [-1, 1] to [0, 1]
-        normal_vector += 1f32;
-        normal_vector /= 2f32;
-        return normal_vector;
-    }
-
-    let ray_direction_unit = Vec3::unit_vector(&ray.direction());
-    let t = 0.5f32 * ray_direction_unit.y() + 1f32;
-    return &(&Vec3::new(1.0, 1.0, 1.0) * (1f32 - t)) + &(&Vec3::new(0.5, 0.7, 1.0) * t);
 }
 
 fn main() {
@@ -67,6 +25,13 @@ fn main() {
     let horizontal = Vec3::new(4f32, 0f32, 0f32);
     let vertical = Vec3::new(0f32, 2f32, 0f32);
 
+    let list: Vec<Box<Hitable>> = vec![
+        Box::new(Sphere::new(Vec3::new(0f32, 0f32, -1f32), 0.5)),
+        Box::new(Sphere::new(Vec3::new(0f32, -100.5, -1f32), 100f32)),
+    ];
+
+    let world = HitableList::new(list);
+
     println!("P3\n{} {}\n255", num_rows, num_cols);
     for y in (0..num_cols).rev() {
         for x in 0..num_rows {
@@ -76,7 +41,8 @@ fn main() {
             // pass read-only reference
             let origin = Vec3::new(0f32, 0f32, 0f32);
             let ray = Ray::new(origin, &lower_left_corner + &(&(&horizontal * u) + &(&vertical * v)));
-            let color = self::color(&ray);
+
+            let color = self::color(&ray, &world);
             
             let ir = (255.99 * color.r()) as i32;
             let ig = (255.99 * color.g()) as i32;
