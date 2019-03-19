@@ -1,10 +1,16 @@
+mod camera;
 mod hitable;
 mod ray;
 mod vector;
 
+extern crate rand;
+
 use ray::Ray;
 use vector::Vec3;
 use hitable::*;
+use camera::Camera;
+
+use rand::prelude::*;
 
 fn color(ray: &Ray, world: &HitableList) -> Vec3 {
     if let Some(hit_record) = world.hit(&ray, 0f32, std::f32::MAX) {
@@ -20,10 +26,7 @@ fn color(ray: &Ray, world: &HitableList) -> Vec3 {
 fn main() {
     let num_rows = 200;
     let num_cols = 100;
-
-    let lower_left_corner = Vec3::new(-2f32, -1f32, -1f32);
-    let horizontal = Vec3::new(4f32, 0f32, 0f32);
-    let vertical = Vec3::new(0f32, 2f32, 0f32);
+    let num_aa_samples = 100;
 
     let list: Vec<Box<Hitable>> = vec![
         Box::new(Sphere::new(Vec3::new(0f32, 0f32, -1f32), 0.5)),
@@ -31,22 +34,24 @@ fn main() {
     ];
 
     let world = HitableList::new(list);
+    let camera = Camera::new();
 
     println!("P3\n{} {}\n255", num_rows, num_cols);
     for y in (0..num_cols).rev() {
         for x in 0..num_rows {
-            let u = x as f32 / num_rows as f32;
-            let v = y as f32 / num_cols as f32;
-            // clone
-            // pass read-only reference
-            let origin = Vec3::new(0f32, 0f32, 0f32);
-            let ray = Ray::new(origin, &lower_left_corner + &(&(&horizontal * u) + &(&vertical * v)));
+            let mut aa_pixel = Vec3::new(0.0, 0.0, 0.0);
+            for _s in 0..num_aa_samples {
+                let u = (x as f32 + random::<f32>()) / num_rows as f32;
+                let v = (y as f32 + random::<f32>()) / num_cols as f32;
+                let ray = camera.get_ray(u, v);
+                let color = self::color(&ray, &world);
+                aa_pixel += color;
+            }
 
-            let color = self::color(&ray, &world);
-            
-            let ir = (255.99 * color.r()) as i32;
-            let ig = (255.99 * color.g()) as i32;
-            let ib = (255.99 * color.b()) as i32;
+            aa_pixel /= num_aa_samples as f32;
+            let ir = (255.99 * aa_pixel.r()) as i32;
+            let ig = (255.99 * aa_pixel.g()) as i32;
+            let ib = (255.99 * aa_pixel.b()) as i32;
 
             println!("{} {} {}", ir, ig, ib);
         }
