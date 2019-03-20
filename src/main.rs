@@ -13,9 +13,11 @@ use camera::Camera;
 use rand::prelude::*;
 
 fn color(ray: &Ray, world: &HitableList) -> Vec3 {
-    if let Some(hit_record) = world.hit(&ray, 0f32, std::f32::MAX) {
-        let colorized_normal = &(&hit_record.normal + 1f32) / 2f32;
-        return colorized_normal;
+    // 0.001 to correct for rays bouncing off at minimal floats (0.00000000001)
+    if let Some(hit_record) = world.hit(&ray, 0.001, std::f32::MAX) {
+        let target: Vec3 = &hit_record.point + &hit_record.normal + Vec3::random_in_unit_sphere();
+        let target_direction = &target - &hit_record.point;
+        return self::color(&Ray::new(hit_record.point, target_direction), world) * 0.5f32;
     } else {
         let ray_direction_unit = Vec3::unit_vector(&ray.direction());
         let t = 0.5f32 * ray_direction_unit.y() + 1f32;
@@ -49,9 +51,10 @@ fn main() {
             }
 
             aa_pixel /= num_aa_samples as f32;
-            let ir = (255.99 * aa_pixel.r()) as i32;
-            let ig = (255.99 * aa_pixel.g()) as i32;
-            let ib = (255.99 * aa_pixel.b()) as i32;
+            let gamma_corrected_pixel = Vec3::new(aa_pixel.r().sqrt(), aa_pixel.g().sqrt(), aa_pixel.b().sqrt());
+            let ir = (255.99 * gamma_corrected_pixel.r()) as i32;
+            let ig = (255.99 * gamma_corrected_pixel.g()) as i32;
+            let ib = (255.99 * gamma_corrected_pixel.b()) as i32;
 
             println!("{} {} {}", ir, ig, ib);
         }

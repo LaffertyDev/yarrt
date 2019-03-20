@@ -47,7 +47,7 @@ impl Hitable for Sphere {
 
         // I forgot about the quadratic behavior, but reading up on wikipedia got me back up to speed: https://en.wikipedia.org/wiki/Quadratic_formula#Geometrical_significance
         // Essentially, the number of solutions to the formula are given by b^2 - 4ac
-        let sphere_origin_vector = ray.origin() - &self.center();
+        let sphere_origin_vector = ray.origin() - self.center();
         let a = Vec3::dot(&ray.direction(), &ray.direction());
         let b = Vec3::dot(ray.direction(), &sphere_origin_vector);
         let c = Vec3::dot(&sphere_origin_vector, &sphere_origin_vector) - self.radius() * self.radius();
