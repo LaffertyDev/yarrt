@@ -1,21 +1,21 @@
 use crate::hitable::hitable::{HitRecord, Hitable};
 use crate::Ray;
-use crate::Vec3;
+use crate::Vector3;
 
 pub struct Sphere {
-    center: Vec3,
+    center: Vector3,
     radius: f32
 }
 
 impl Sphere {
-    pub fn new(center: Vec3, radius: f32) -> Self {
+    pub fn new(center: Vector3, radius: f32) -> Self {
         Sphere {
             center: center,
             radius: radius
         }
     }
 
-    pub fn center(&self) -> &Vec3 {
+    pub fn center(&self) -> &Vector3 {
         return &self.center;
     }
 
@@ -48,9 +48,9 @@ impl Hitable for Sphere {
         // I forgot about the quadratic behavior, but reading up on wikipedia got me back up to speed: https://en.wikipedia.org/wiki/Quadratic_formula#Geometrical_significance
         // Essentially, the number of solutions to the formula are given by b^2 - 4ac
         let sphere_origin_vector = ray.origin() - self.center();
-        let a = Vec3::dot(&ray.direction(), &ray.direction());
-        let b = Vec3::dot(ray.direction(), &sphere_origin_vector);
-        let c = Vec3::dot(&sphere_origin_vector, &sphere_origin_vector) - self.radius() * self.radius();
+        let a = Vector3::dot(&ray.direction(), &ray.direction());
+        let b = Vector3::dot(ray.direction(), &sphere_origin_vector);
+        let c = Vector3::dot(&sphere_origin_vector, &sphere_origin_vector) - self.radius() * self.radius();
 
         let discriminant = b*b - a * c;
         // negative means no real solution

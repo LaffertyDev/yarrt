@@ -1,20 +1,20 @@
-use crate::Vec3;
+use crate::Vector3;
 use crate::Ray;
 
 pub struct Camera {
-    lower_left_corner: Vec3,
-    horizontal: Vec3,
-    vertical: Vec3,
-    origin: Vec3,
+    lower_left_corner: Vector3,
+    horizontal: Vector3,
+    vertical: Vector3,
+    origin: Vector3,
 }
 
 impl Camera {
     pub fn new() -> Camera {
         Camera {
-            lower_left_corner: Vec3::new(-2.0, -1.0, -1.0),
-            horizontal: Vec3::new(4.0, 0.0, 0.0),
-            vertical: Vec3::new(0.0, 2.0, 0.0),
-            origin: Vec3::new(0.0, 0.0, 0.0)
+            lower_left_corner: Vector3::new(-2.0, -1.0, -1.0),
+            horizontal: Vector3::new(4.0, 0.0, 0.0),
+            vertical: Vector3::new(0.0, 2.0, 0.0),
+            origin: Vector3::new(0.0, 0.0, 0.0)
         }
     }
 
