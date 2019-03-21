@@ -1,5 +1,6 @@
 use crate::ray::Ray;
-use crate::hitable::hitable::{HitRecord, Hitable};
+use crate::Hitable;
+use crate::HitRecord;
 
 pub struct HitableList {
     hitables: Vec<Box<Hitable>>,

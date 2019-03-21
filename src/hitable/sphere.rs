@@ -1,4 +1,5 @@
-use crate::hitable::hitable::{HitRecord, Hitable};
+use crate::hitable::hitable::{Hitable};
+use crate::HitRecord;
 use crate::Ray;
 use crate::Vector3;
 
