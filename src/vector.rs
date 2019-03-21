@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign, MulAssign};
+use std::ops;
 
 use rand::prelude::*;
 
@@ -8,7 +8,6 @@ pub struct Vec3 {
     e1: f32,
     e2: f32,
 }
-
 
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
@@ -78,260 +77,175 @@ impl Vec3 {
     }
 }
 
-impl Add for &Vec3 {
-    type Output = Vec3;
+/// Generates the operations for vector methods. `let result = my_vec_3 + my_other_vec3`
+/// Handles `Vec3, Vec3`, `Vec3, &Vec3`, `&Vec3, Vec3`, `&Vec3, &Vec3`
+/// `vec3_vec3_op(ops::AddAssign, add_assign)` (note the camelcase add_assign name)
+macro_rules! vec3_vec3_op {
+    ($($path:ident)::+, $fn:ident) => {
+        impl $($path)::+<Vec3> for Vec3 {
+            type Output = Vec3;
 
-    fn add(self, other: &Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 + other.e0,
-            e1: self.e1 + other.e1,
-            e2: self.e2 + other.e2
+            fn $fn(self, other: Vec3) -> Self::Output {
+                Vec3 {
+                    e0: self.e0.$fn(other.e0),
+                    e1: self.e1.$fn(other.e1),
+                    e2: self.e2.$fn(other.e2),
+                }
+            }
+        }
+
+        impl $($path)::+<&Vec3> for &Vec3 {
+            type Output = Vec3;
+
+            fn $fn(self, other: &Vec3) -> Self::Output {
+                Vec3 {
+                    e0: self.e0.$fn(other.e0),
+                    e1: self.e1.$fn(other.e1),
+                    e2: self.e2.$fn(other.e2),
+                }
+            }
+        }
+
+        impl $($path)::+<&Vec3> for Vec3 {
+            type Output = Vec3;
+
+            fn $fn(self, other: &Vec3) -> Self::Output {
+                Vec3 {
+                    e0: self.e0.$fn(other.e0),
+                    e1: self.e1.$fn(other.e1),
+                    e2: self.e2.$fn(other.e2),
+                }
+            }
+        }
+
+        impl $($path)::+<Vec3> for &Vec3 {
+            type Output = Vec3;
+
+            fn $fn(self, other: Vec3) -> Self::Output {
+                Vec3 {
+                    e0: self.e0.$fn(other.e0),
+                    e1: self.e1.$fn(other.e1),
+                    e2: self.e2.$fn(other.e2),
+                }
+            }
+        }
+    };
+}
+
+/// Generates the operations for vector method assignment. `my_vec += my_other_vec`
+/// Handles `Vec3, Vec3` and `Vec3, &Vec3`
+/// `vec3_vec3_opassign(ops::AddAssign, add_assign)` (note the camelcase add_assign name)
+macro_rules! vec3_vec3_opassign {
+    ($($path:ident)::+, $fn:ident) => {
+        impl $($path)::+<Vec3> for Vec3 {
+            fn $fn(&mut self, other: Vec3) {
+                self.e0.$fn(other.e0);
+                self.e1.$fn(other.e1);
+                self.e2.$fn(other.e2);
+            }
+        }
+
+        impl $($path)::+<&Vec3> for Vec3 {
+            fn $fn(&mut self, other: &Vec3) {
+                self.e0.$fn(other.e0);
+                self.e1.$fn(other.e1);
+                self.e2.$fn(other.e2);
+            }
+        }
+    };
+}
+
+/// Generates the operations for method assignment. `my_vec += f32`
+/// `vec3_opassign(ops:AddAssign, add_assign)` (note the camelcase add_assign name)
+macro_rules! vec3_opassign {
+    ($($path:ident)::+, $fn:ident, $ty:ty) => {
+        impl $($path)::+<$ty> for Vec3 {
+            fn $fn(&mut self, other: $ty) {
+                self.e0.$fn(other);
+                self.e1.$fn(other);
+                self.e2.$fn(other);
+            }
         }
     }
 }
 
-impl Mul for &Vec3 {
-    type Output = Vec3;
+/// Generates the operations for the method. `let result = my_vec + 4f32`
+/// Handles `Vec3, T`, `T, Vec3`, `&Vec3, T`, `T, &Vec3`
+/// `vec3_op!(ops:Add, add, f32)`
+macro_rules! vec3_op {
+    ($($path:ident)::+, $fn:ident, $ty:ty) => {
+        // impl ops::Add::add for Vec3
+        impl $($path)::+<$ty> for Vec3 {
+            type Output = Vec3;
 
-    fn mul(self, other: &Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 * other.e0,
-            e1: self.e1 * other.e1,
-            e2: self.e2 * other.e2
+            // fn add(self, other: f32) -> Self::Output
+            fn $fn(self, other: $ty) -> Self::Output {
+                Vec3 {
+                    // e0: self.e0.add(other)
+                    e0: self.e0.$fn(other),
+                    e1: self.e1.$fn(other),
+                    e2: self.e2.$fn(other),
+                }
+            }
+        }
+
+        impl $($path)::+<$ty> for &Vec3 {
+            type Output = Vec3;
+
+            fn $fn(self, other: $ty) -> Self::Output {
+                Vec3 {
+                    e0: self.e0.$fn(other),
+                    e1: self.e1.$fn(other),
+                    e2: self.e2.$fn(other),
+                }
+            }
+        }
+
+        impl $($path)::+<Vec3> for $ty {
+            type Output = Vec3;
+
+            fn $fn(self, other: Vec3) -> Self::Output {
+                Vec3 {
+                    e0: self.$fn(other.e0),
+                    e1: self.$fn(other.e1),
+                    e2: self.$fn(other.e2),
+                }
+            }
+        }
+
+        impl $($path)::+<&Vec3> for $ty {
+            type Output = Vec3;
+
+            fn $fn(self, other: &Vec3) -> Self::Output {
+                Vec3 {
+                    e0: self.$fn(other.e0),
+                    e1: self.$fn(other.e1),
+                    e2: self.$fn(other.e2),
+                }
+            }
         }
     }
 }
 
-impl Div for &Vec3 {
-    type Output = Vec3;
-
-    fn div(self, other: &Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 / other.e0,
-            e1: self.e1 / other.e1,
-            e2: self.e2 / other.e2
-        }
-    }
+macro_rules! vec3_op_for {
+    ($ty: ty) => {
+        vec3_op!(ops::Add, add, $ty);
+        vec3_op!(ops::Sub, sub, $ty);
+        vec3_op!(ops::Mul, mul, $ty);
+        vec3_op!(ops::Div, div, $ty);
+        vec3_opassign!(ops::AddAssign, add_assign, $ty);
+        vec3_opassign!(ops::SubAssign, sub_assign, $ty);
+        vec3_opassign!(ops::MulAssign, mul_assign, $ty);
+        vec3_opassign!(ops::DivAssign, div_assign, $ty);
+    };
 }
 
-impl Sub for &Vec3 {
-    type Output = Vec3;
-
-    fn sub(self, other: &Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 - other.e0,
-            e1: self.e1 - other.e1,
-            e2: self.e2 - other.e2
-        }
-    }
-}
-
-
-impl Add for Vec3 {
-    type Output = Vec3;
-
-    fn add(self, other: Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 + other.e0,
-            e1: self.e1 + other.e1,
-            e2: self.e2 + other.e2
-        }
-    }
-}
-
-impl Mul for Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, other: Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 * other.e0,
-            e1: self.e1 * other.e1,
-            e2: self.e2 * other.e2
-        }
-    }
-}
-
-impl Div for Vec3 {
-    type Output = Vec3;
-
-    fn div(self, other: Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 / other.e0,
-            e1: self.e1 / other.e1,
-            e2: self.e2 / other.e2
-        }
-    }
-}
-
-impl Sub for Vec3 {
-    type Output = Vec3;
-
-    fn sub(self, other: Vec3) -> Vec3 {
-        Vec3 {
-            e0: self.e0 - other.e0,
-            e1: self.e1 - other.e1,
-            e2: self.e2 - other.e2
-        }
-    }
-}
-
-impl Add<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn add(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 + other,
-            e1: self.e1 + other,
-            e2: self.e2 + other
-        }
-    }
-}
-
-impl Sub<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn sub(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 - other,
-            e1: self.e1 - other,
-            e2: self.e2 - other
-        }
-    }
-}
-
-impl Div<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn div(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 / other,
-            e1: self.e1 / other,
-            e2: self.e2 / other
-        }
-    }
-}
-
-impl Mul<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 * other,
-            e1: self.e1 * other,
-            e2: self.e2 * other
-        }
-    }
-}
-
-impl Add<f32> for Vec3 {
-    type Output = Vec3;
-
-    fn add(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 + other,
-            e1: self.e1 + other,
-            e2: self.e2 + other
-        }
-    }
-}
-
-impl Sub<f32> for Vec3 {
-    type Output = Vec3;
-
-    fn sub(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 - other,
-            e1: self.e1 - other,
-            e2: self.e2 - other
-        }
-    }
-}
-
-impl Div<f32> for Vec3 {
-    type Output = Vec3;
-
-    fn div(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 / other,
-            e1: self.e1 / other,
-            e2: self.e2 / other
-        }
-    }
-}
-
-impl Mul<f32> for Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, other: f32) -> Vec3 {
-        Vec3 {
-            e0: self.e0 * other,
-            e1: self.e1 * other,
-            e2: self.e2 * other
-        }
-    }
-}
-
-
-impl SubAssign for Vec3 {
-    fn sub_assign(&mut self, other: Vec3) {
-        self.e0 -= other.e0;
-        self.e1 -= other.e1;
-        self.e2 -= other.e2;
-    }
-}
-
-impl AddAssign for Vec3 {
-    fn add_assign(&mut self, other: Vec3) {
-        self.e0 += other.e0;
-        self.e1 += other.e1;
-        self.e2 += other.e2;
-    }
-}
-
-impl MulAssign for Vec3 {
-    fn mul_assign(&mut self, other: Vec3) {
-        self.e0 *= other.e0;
-        self.e1 *= other.e1;
-        self.e2 *= other.e2;
-    }
-}
-
-impl DivAssign for Vec3 {
-    fn div_assign(&mut self, other: Vec3) {
-        self.e0 /= other.e0;
-        self.e1 /= other.e1;
-        self.e2 /= other.e2;
-    }
-}
-
-impl SubAssign<f32> for Vec3 {
-    fn sub_assign(&mut self, other: f32) {
-        self.e0 -= other;
-        self.e1 -= other;
-        self.e2 -= other;
-    }
-}
-
-impl AddAssign<f32> for Vec3 {
-    fn add_assign(&mut self, other: f32) {
-        self.e0 += other;
-        self.e1 += other;
-        self.e2 += other;
-    }
-}
-
-impl MulAssign<f32> for Vec3 {
-    fn mul_assign(&mut self, other: f32) {
-        self.e0 *= other;
-        self.e1 *= other;
-        self.e2 *= other;
-    }
-}
-
-impl DivAssign<f32> for Vec3 {
-    fn div_assign(&mut self, other: f32) {
-        self.e0 /= other;
-        self.e1 /= other;
-        self.e2 /= other;
-    }
-}
+vec3_op_for!(f32);
+vec3_vec3_op!(ops::Add, add);
+vec3_vec3_op!(ops::Sub, sub);
+vec3_vec3_op!(ops::Mul, mul);
+vec3_vec3_op!(ops::Div, div);
+vec3_vec3_opassign!(ops::AddAssign, add_assign);
+vec3_vec3_opassign!(ops::SubAssign, sub_assign);
+vec3_vec3_opassign!(ops::MulAssign, mul_assign);
+vec3_vec3_opassign!(ops::DivAssign, div_assign);

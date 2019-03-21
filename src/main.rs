@@ -17,7 +17,7 @@ fn color(ray: &Ray, world: &HitableList) -> Vec3 {
     if let Some(hit_record) = world.hit(&ray, 0.001, std::f32::MAX) {
         let target: Vec3 = &hit_record.point + &hit_record.normal + Vec3::random_in_unit_sphere();
         let target_direction = &target - &hit_record.point;
-        return self::color(&Ray::new(hit_record.point, target_direction), world) * 0.5f32;
+        return 0.5 * self::color(&Ray::new(hit_record.point, target_direction), world);
     } else {
         let ray_direction_unit = Vec3::unit_vector(&ray.direction());
         let t = 0.5f32 * ray_direction_unit.y() + 1f32;
