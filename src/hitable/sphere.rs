@@ -1,18 +1,21 @@
-use crate::hitable::hitable::{Hitable};
+use crate::Hitable;
 use crate::HitRecord;
 use crate::Ray;
 use crate::Vector3;
+use crate::material::Material;
 
 pub struct Sphere {
     center: Vector3,
-    radius: f32
+    radius: f32,
+    material: Box<dyn Material>
 }
 
 impl Sphere {
-    pub fn new(center: Vector3, radius: f32) -> Self {
+    pub fn new(center: Vector3, radius: f32, material: Box<dyn Material>) -> Self {
         Sphere {
             center: center,
-            radius: radius
+            radius: radius,
+            material: material,
         }
     }
 
@@ -65,7 +68,7 @@ impl Hitable for Sphere {
         if t_min < time_at_hit && time_at_hit < t_max {
             let point_at_hit = ray.point_at_time(time_at_hit);
             let normal = &(&point_at_hit - self.center()) / self.radius();
-            let hr = HitRecord::new(time_at_hit, point_at_hit, normal);
+            let hr = HitRecord::new(time_at_hit, point_at_hit, normal, Box::new(&*self.material));
             return Some(hr);
         }
 
@@ -73,7 +76,7 @@ impl Hitable for Sphere {
         if t_min < time_at_hit && time_at_hit < t_max {
             let point_at_hit = ray.point_at_time(time_at_hit);
             let normal = &(&point_at_hit - self.center()) / self.radius();
-            let hr = HitRecord::new(time_at_hit, point_at_hit, normal);
+            let hr = HitRecord::new(time_at_hit, point_at_hit, normal, Box::new(&*self.material));
             return Some(hr);
         }
 

@@ -21,3 +21,7 @@ We load all of the Geometry and Materials into their related entities, and then 
 2. Lifetimes
 
 Unique to Rust (and to help with Ownership) we can specify non-mutable references. Since none of our created entities (`Hitables` and `Materials`) actually mutate after creation, we could use read-only references in the `HitRecord` structure. To do *that*, we would need to specify a `HitRecord` has the same lifetime as a `Ray`.
+
+## Todo
+
+1. Ray needs to take a reference to the Origin
