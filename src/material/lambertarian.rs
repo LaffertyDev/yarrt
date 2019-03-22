@@ -7,7 +7,7 @@ use crate::Vector3;
 
 pub struct LambertarianMaterial {
     /// Albedo is how much energy is "absorbed" by the material
-    /// Higher albedo means more absorbtion
+    /// Higher albedo means less absorbtion
     albedo: Vector3,
 }
 
@@ -20,7 +20,7 @@ impl LambertarianMaterial {
 }
 
 impl Material for LambertarianMaterial {
-    fn scatter<'a>(&self, ray: &'a Ray, hit_record: &HitRecord) -> Option<MaterialScatter> {
+    fn scatter<'a>(&self, _ray: &'a Ray, hit_record: &HitRecord) -> Option<MaterialScatter> {
         let target: Vector3 = &hit_record.point + &hit_record.normal + Vector3::random_in_unit_sphere();
         let target_direction = &target - &hit_record.point;
 

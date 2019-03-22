@@ -51,8 +51,8 @@ fn main() {
     let list: Vec<Box<Hitable>> = vec![
         Box::new(Sphere::new(Vector3::new(0f32, 0f32, -1f32), 0.5, Box::new(LambertarianMaterial::new(Vector3::new(0.8, 0.3, 0.3))))),
         Box::new(Sphere::new(Vector3::new(0f32, -100.5, -1f32), 100f32, Box::new(LambertarianMaterial::new(Vector3::new(0.8, 0.8, 0.0))))),
-        Box::new(Sphere::new(Vector3::new(1f32, 0f32, -1f32), 0.5, Box::new(MetalMaterial::new(Vector3::new(0.8, 0.6, 0.2))))),
-        Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), 0.5, Box::new(MetalMaterial::new(Vector3::new(0.8, 0.8, 0.8))))),
+        Box::new(Sphere::new(Vector3::new(1f32, 0f32, -1f32), 0.5, Box::new(MetalMaterial::new(Vector3::new(0.8, 0.6, 0.2), 0.5)))),
+        Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), 0.5, Box::new(MetalMaterial::new(Vector3::new(0.8, 0.8, 0.8), 0.0)))),
     ];
 
     let world = HitableList::new(list);
