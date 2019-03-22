@@ -4,6 +4,7 @@ use crate::MaterialScatter;
 use crate::Ray;
 use crate::Vector3;
 
+/// Metalic materials are very glossy, meaning extreme reflectivity
 pub struct MetalMaterial {
     /// Albedo is how much energy is "absorbed" by the material
     /// Higher albedo means less absorbtion
