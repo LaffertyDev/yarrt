@@ -10,18 +10,6 @@ pub struct Vector3 {
 }
 
 impl Vector3 {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
-        Vector3 { e0: x, e1: y, e2: z}
-    }
-
-    pub fn magnitude(&self) -> f32 {
-        return (self.e0.powi(2) + self.e1.powi(2) + self.e2.powi(2)).sqrt();
-    }
-
-    pub fn magnitude_squared(&self) -> f32 {
-        return self.e0.powi(2) + self.e1.powi(2) + self.e2.powi(2);
-    }
-
     pub fn unit_vector(vector: &Vector3) -> Vector3 {
         let mag = vector.magnitude();
         return vector / mag;
@@ -29,14 +17,6 @@ impl Vector3 {
 
     pub fn dot(lhs: &Vector3, rhs: &Vector3) -> f32 {
         return lhs.e0 * rhs.e0 + lhs.e1 * rhs.e1 + lhs.e2 * rhs.e2;
-    }
-
-    pub fn cross(&self, other: &Vector3) -> Vector3 {
-        Vector3 {
-            e0: self.e1 * other.e2 - self.e2 * other.e1,
-            e1: -(self.e0 * other.e2 - self.e2 * other.e0),
-            e2: self.e0 * other.e1 - other.e1 * self.e0
-        }
     }
 
     pub fn random_in_unit_sphere() -> Vector3 {
@@ -50,6 +30,37 @@ impl Vector3 {
         }
 
         return point;
+    }
+
+    /// Reflects the vector_to_reflect along the normal_of_reflection
+    pub fn reflect(vector_to_reflect: &Vector3, normal_of_reflection: &Vector3) -> Vector3 {
+        // dot product produces the "amount of vector in the other vector"
+        // so this is perfect for reflection
+        // 2 * the dot because the vector_to_reflect will go in that direction beyond the normal, so it needs "two times the distance in the normal traveled" to determine its "real" spot
+        // https://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector 
+        return vector_to_reflect - 2f32 * Vector3::dot(vector_to_reflect, normal_of_reflection) * normal_of_reflection;
+    }
+}
+
+impl Vector3 {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        Vector3 { e0: x, e1: y, e2: z}
+    }
+
+    pub fn cross(&self, other: &Vector3) -> Vector3 {
+        Vector3 {
+            e0: self.e1 * other.e2 - self.e2 * other.e1,
+            e1: -(self.e0 * other.e2 - self.e2 * other.e0),
+            e2: self.e0 * other.e1 - other.e1 * self.e0
+        }
+    }
+
+    pub fn magnitude(&self) -> f32 {
+        return (self.e0.powi(2) + self.e1.powi(2) + self.e2.powi(2)).sqrt();
+    }
+
+    pub fn magnitude_squared(&self) -> f32 {
+        return self.e0.powi(2) + self.e1.powi(2) + self.e2.powi(2);
     }
     
     pub fn x(&self) -> f32 {
