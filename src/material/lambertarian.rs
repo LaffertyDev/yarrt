@@ -27,7 +27,7 @@ impl Material for LambertarianMaterial {
         return Some(
             MaterialScatter {
                 ray: Ray::new(hit_record.point.clone(), target_direction),
-                albedo: &self.albedo
+                albedo: self.albedo.clone()
             }
         )
     }

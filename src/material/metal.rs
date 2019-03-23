@@ -27,7 +27,7 @@ impl MetalMaterial {
 }
 
 impl Material for MetalMaterial {
-    fn scatter<'a>(&self, ray: &'a Ray, hit_record: &HitRecord) -> Option<MaterialScatter> {
+    fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<MaterialScatter> {
         let reflected_direction = Vector3::reflect(&Vector3::unit_vector(ray.direction()), &hit_record.normal);
         let scattered_ray = Ray::new(hit_record.point.clone(), reflected_direction + self.fuzziness * Vector3::random_in_unit_sphere());
 
@@ -38,7 +38,7 @@ impl Material for MetalMaterial {
         return Some(
             MaterialScatter {
                 ray: scattered_ray,
-                albedo: &self.albedo
+                albedo: self.albedo.clone()
             }
         )
     }

@@ -40,6 +40,46 @@ impl Vector3 {
         // https://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector 
         return vector_to_reflect - 2f32 * Vector3::dot(vector_to_reflect, normal_of_reflection) * normal_of_reflection;
     }
+
+    /// Attempts to refract the vector_to_refract along the normal_of_refraction with the refraction index
+    /// 
+    /// Will return "None" if there are no real solutions (all light is absorbed in the refraction process)
+    /// Otherwise returns the refracted vector
+    /// 
+    /// This is an implementation of Schnell's Law in Vector Form
+    /// https://en.wikipedia.org/wiki/Snell%27s_law#Vector_form
+    /// 
+    /// vector_to_refract is the "Light Vector" (pointing from the light source toward the surface of the geometry)
+    /// normal_of_refraction is the normalized "plane vector"
+    /// refraction_index_differential is the form of "N / N'" - the refraction index of the original medium divided by the refraction index of the geometric medium
+    /// 
+    /// For more info on refraction index, this link helps: http://hyperphysics.phy-astr.gsu.edu/hbase/geoopt/refr.html
+    pub fn refract(vector_to_refract: &Vector3, normal_of_refraction: &Vector3, refraction_index_differential: f32) -> Option<Vector3> {
+        // to understand this read up on the wikipedia article
+        let vector_to_refract = Vector3::unit_vector(&vector_to_refract);
+        let c = Vector3::dot(&vector_to_refract, &-normal_of_refraction);
+        let discriminant = 1f32 - refraction_index_differential * refraction_index_differential * (1f32 - c * c);
+        if discriminant <= 0.0 {
+            // All light was absorbed as part of the refraction (no real solution)
+            return None;
+        }
+
+        let refracted = (refraction_index_differential * vector_to_refract) + (normal_of_refraction * (refraction_index_differential * c - discriminant.sqrt()));
+        return Some(refracted);
+    }
+
+    pub fn refract_book(vector_to_refract: &Vector3, normal_of_refraction: &Vector3, refraction_index_differential: f32) -> Option<Vector3> {
+        // to understand this read up on the wikipedia article
+        let vector_to_refract = Vector3::unit_vector(&vector_to_refract);
+        let dt = Vector3::dot(&vector_to_refract, normal_of_refraction);
+        let discriminant = 1.0 - refraction_index_differential * refraction_index_differential * (1.0 - dt * dt);
+        if discriminant <= 0.0 {
+            return None;
+        }
+
+        let refraction = refraction_index_differential * (vector_to_refract - normal_of_refraction * dt) - normal_of_refraction * discriminant.sqrt();
+        return Some(refraction)
+    }
 }
 
 impl Vector3 {
@@ -260,3 +300,27 @@ Vector3_Vector3_opassign!(ops::AddAssign, add_assign);
 Vector3_Vector3_opassign!(ops::SubAssign, sub_assign);
 Vector3_Vector3_opassign!(ops::MulAssign, mul_assign);
 Vector3_Vector3_opassign!(ops::DivAssign, div_assign);
+
+impl ops::Neg for Vector3 {
+    type Output = Vector3;
+
+    fn neg(self) -> Vector3 {
+        Vector3 {
+            e0: -self.e0,
+            e1: -self.e1,
+            e2: -self.e2
+        }
+    }
+}
+
+impl ops::Neg for &Vector3 {
+    type Output = Vector3;
+
+    fn neg(self) -> Vector3 {
+        Vector3 {
+            e0: -self.e0,
+            e1: -self.e1,
+            e2: -self.e2
+        }
+    }
+}
