@@ -24,4 +24,8 @@ Unique to Rust (and to help with Ownership) we can specify non-mutable reference
 
 ## Todo
 
-1. Ray needs to take a reference to the Origin
+1. Ray could take a reference to the Origin
+2. Rename "Hitable" to "Geometry"
+3. Move main code to a lib function
+4. add input arguments to the main for camera settings
+5. Maybe add in scene loading to render a blender scene file?

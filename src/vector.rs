@@ -21,8 +21,9 @@ impl Vector3 {
 
     /// Returns a random Disk with X,Y values (Z is clamped to 0)
     pub fn random_in_disk() -> Vector3 {
+        let mut rng = rand::thread_rng();
         loop {
-            let disk = 2.0 * Vector3::new(random::<f32>(), random::<f32>(), 0.0) - Vector3::new(1.0, 1.0, 0.0);
+            let disk = 2.0 * Vector3::new(rng.gen::<f32>(), rng.gen::<f32>(), 0.0) - Vector3::new(1.0, 1.0, 0.0);
             if Vector3::dot(&disk, &disk) < 1.0 {
                 return disk;
             }
@@ -31,9 +32,10 @@ impl Vector3 {
 
     /// Returns a random Sphere with X,Y,Z values
     pub fn random_in_unit_sphere() -> Vector3 {
+        let mut rng = rand::thread_rng();
         let mut point: Vector3;
         loop {
-            point = Vector3::new(random::<f32>(), random::<f32>(), random::<f32>()) * 2.0 -1.0;
+            point = Vector3::new(rng.gen::<f32>(), rng.gen::<f32>(), rng.gen::<f32>()) * 2.0 -1.0;
 
             if point.magnitude_squared() < 1.0 {
                 break;

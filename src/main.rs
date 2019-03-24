@@ -1,6 +1,7 @@
 mod camera;
 mod hitable;
 mod material;
+mod scene;
 mod ray;
 mod vector;
 
@@ -44,27 +45,15 @@ fn main() {
     let num_rows = 200;
     let num_cols = 100;
     let num_aa_samples = 100;
-
-    // let list:Vec<Box<Hitable>> = vec![
-    //      Box::new(Sphere::new(Vector3::new(-sphere_radius, 0f32, -1f32), sphere_radius, Box::new(LambertarianMaterial::new(Vector3::new(0.0, 0.0, 1.0))))),
-    //      Box::new(Sphere::new(Vector3::new(sphere_radius, 0f32, -1f32), sphere_radius, Box::new(LambertarianMaterial::new(Vector3::new(1.0, 0.0, 0.0))))),
-    // ];
-
-    let list: Vec<Box<Hitable>> = vec![
-        Box::new(Sphere::new(Vector3::new(0f32, 0f32, -1f32), 0.5, Box::new(LambertarianMaterial::new(Vector3::new(0.0, 0.0, 1.0))))),
-        Box::new(Sphere::new(Vector3::new(0f32, -100.5, -1f32), 100f32, Box::new(LambertarianMaterial::new(Vector3::new(0.8, 0.8, 0.0))))),
-        Box::new(Sphere::new(Vector3::new(1f32, 0f32, -1f32), 0.5, Box::new(MetalMaterial::new(Vector3::new(0.8, 0.6, 0.2), 0.5)))),
-        Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), 0.5, Box::new(DialetricMaterial::new(1.5)))),
-        Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), -0.45, Box::new(DialetricMaterial::new(1.5)))),
-    ];
-
-    let world = HitableList::new(list);
+    eprintln!("Generating scene");
+    let world = scene::random_scene(40);
+    eprintln!("Generated scene");
     let aspect_ratio = num_rows as f32 / num_cols as f32;
-    let look_from = Vector3::new(3.0, 3.0, 2.0);
-    let look_at = Vector3::new(0.0, 0.0, -1.0);
+    let look_from = Vector3::new(13.0, 2.0, 3.0);
+    let look_at = Vector3::new(0.0, 0.0, 0.0);
     let v_up = Vector3::new(0.0, 1.0, 0.0);
-    let focus_distance = (&look_from - &look_at).magnitude();
-    let camera = Camera::new(look_from, look_at, v_up, 20.0, aspect_ratio, 2.0, focus_distance);
+    let focus_distance = 10f32;
+    let camera = Camera::new(look_from, look_at, v_up, 20.0, aspect_ratio, 0.1, focus_distance);
 
     println!("P3\n{} {}\n255", num_rows, num_cols);
     for y in (0..num_cols).rev() {
@@ -86,5 +75,9 @@ fn main() {
 
             println!("{} {} {}", ir, ig, ib);
         }
+
+        let percent_done = 100.0 * (1.0 - (y as f32 / num_cols as f32));
+        eprintln!("{}% done", percent_done);
     }
+    eprintln!("Finished generating raytraced image with dimensions X: {}, Y: {}", num_rows, num_cols);
 }
