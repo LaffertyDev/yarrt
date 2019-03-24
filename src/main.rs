@@ -46,7 +46,7 @@ fn main() {
     let num_cols = 100;
     let num_aa_samples = 100;
     eprintln!("Generating scene");
-    let world = scene::random_scene(40);
+    let world = scene::random_scene();
     eprintln!("Generated scene");
     let aspect_ratio = num_rows as f32 / num_cols as f32;
     let look_from = Vector3::new(13.0, 2.0, 3.0);

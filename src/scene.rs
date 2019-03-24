@@ -7,7 +7,7 @@ use crate::Vector3;
 use rand::prelude::*;
 
 
-pub fn random_scene(num_objects: usize) -> HitableList{
+pub fn random_scene() -> HitableList{
     let mut list: Vec<Box<Hitable>> = vec![
         Box::new(Sphere::new(Vector3::new(0f32, -1000.0, 0f32), 1000f32, Box::new(LambertarianMaterial::new(Vector3::new(0.5, 0.5, 0.5)))))
     ];

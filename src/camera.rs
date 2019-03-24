@@ -6,7 +6,7 @@ pub struct Camera {
     aperture: f32,
 
     /// The depth the camera will use in determining the blur of something. This is what the camera is "Focused On"
-    focus_dist: f32,
+    // focus_dist: f32,
 
     /// The lower-left-corner of the Camera, used to determine all other points relative to it
     lower_left_corner: Vector3,
@@ -21,7 +21,7 @@ pub struct Camera {
     origin: Vector3,
 
     // w is the vector from where we are to where we're looking at, so what we're looking at is always "forward" or "into" the camera, or the Z-component
-    w: Vector3,
+    // w: Vector3,
     // u is the horizontal vector component defining the left & right axis (X-component) of the camera
     u: Vector3,
     // v is the normalized up & down axis (Y-component)
@@ -53,12 +53,12 @@ impl Camera {
 
         Camera {
             aperture: aperture,
-            focus_dist: focus_dist,
+            // focus_dist: focus_dist,
             lower_left_corner: &look_from - &horizontal - &vertical - focus_dist * &w,
             horizontal: 2.0 * horizontal,
             vertical: 2.0 * vertical,
             origin: look_from,
-            w: w,
+            // w: w,
             u: u,
             v: v,
         }
