@@ -27,14 +27,11 @@ fn color(ray: &Ray, world: &HitableList, depth: i32) -> Vector3 {
         if depth < 50 {
             if let Some(scatter_material) = hit_record.material.scatter(ray, &hit_record) {
                 return scatter_material.albedo * color(&scatter_material.ray, world, depth + 1);
-            } else {
-                // we've attenuated the ray
-                return Vector3::new(0.0, 0.0, 0.0);
             }
-        } else {
-            // passed the depth
-            return Vector3::new(0.0, 0.0, 0.0);
         }
+
+        // passed the depth or we've attenuated the ray
+        return Vector3::new(0.0, 0.0, 0.0);
     } else {
         // did not hit an object, return the background
         let ray_direction_unit = Vector3::unit_vector(&ray.direction());
