@@ -41,8 +41,8 @@ fn color(ray: &Ray, world: &HitableList, depth: i32) -> Vector3 {
 }
 
 fn main() {
-    let num_rows = 400;
-    let num_cols = 200;
+    let num_rows = 200;
+    let num_cols = 100;
     let num_aa_samples = 100;
 
     // let list:Vec<Box<Hitable>> = vec![
@@ -60,7 +60,11 @@ fn main() {
 
     let world = HitableList::new(list);
     let aspect_ratio = num_rows as f32 / num_cols as f32;
-    let camera = Camera::new(Vector3::new(-2.0, 2.0, 1.0), Vector3::new(0.0, 0.0, -1.0), Vector3::new(0.0, 1.0, 0.0), 45.0, aspect_ratio);
+    let look_from = Vector3::new(3.0, 3.0, 2.0);
+    let look_at = Vector3::new(0.0, 0.0, -1.0);
+    let v_up = Vector3::new(0.0, 1.0, 0.0);
+    let focus_distance = (&look_from - &look_at).magnitude();
+    let camera = Camera::new(look_from, look_at, v_up, 20.0, aspect_ratio, 2.0, focus_distance);
 
     println!("P3\n{} {}\n255", num_rows, num_cols);
     for y in (0..num_cols).rev() {

@@ -19,6 +19,17 @@ impl Vector3 {
         return lhs.e0 * rhs.e0 + lhs.e1 * rhs.e1 + lhs.e2 * rhs.e2;
     }
 
+    /// Returns a random Disk with X,Y values (Z is clamped to 0)
+    pub fn random_in_disk() -> Vector3 {
+        loop {
+            let disk = 2.0 * Vector3::new(random::<f32>(), random::<f32>(), 0.0) - Vector3::new(1.0, 1.0, 0.0);
+            if Vector3::dot(&disk, &disk) < 1.0 {
+                return disk;
+            }
+        }
+    }
+
+    /// Returns a random Sphere with X,Y,Z values
     pub fn random_in_unit_sphere() -> Vector3 {
         let mut point: Vector3;
         loop {
