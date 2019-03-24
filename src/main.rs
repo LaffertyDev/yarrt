@@ -44,27 +44,26 @@ fn color(ray: &Ray, world: &HitableList, depth: i32) -> Vector3 {
 }
 
 fn main() {
-    let num_rows = 200;
-    let num_cols = 100;
+    let num_rows = 400;
+    let num_cols = 200;
     let num_aa_samples = 100;
 
-    let sphere_radius: f32 = (std::f32::consts::PI / 4.0);
-
-    let list:Vec<Box<Hitable>> = vec![
-         Box::new(Sphere::new(Vector3::new(-sphere_radius, 0f32, -1f32), sphere_radius, Box::new(LambertarianMaterial::new(Vector3::new(0.0, 0.0, 1.0))))),
-         Box::new(Sphere::new(Vector3::new(sphere_radius, 0f32, -1f32), sphere_radius, Box::new(LambertarianMaterial::new(Vector3::new(1.0, 0.0, 0.0))))),
-    ];
-
-    // let list: Vec<Box<Hitable>> = vec![
-    //     Box::new(Sphere::new(Vector3::new(0f32, 0f32, -1f32), 0.5, Box::new(LambertarianMaterial::new(Vector3::new(0.8, 0.3, 0.3))))),
-    //     Box::new(Sphere::new(Vector3::new(0f32, -100.5, -1f32), 100f32, Box::new(LambertarianMaterial::new(Vector3::new(0.8, 0.8, 0.0))))),
-    //     Box::new(Sphere::new(Vector3::new(1f32, 0f32, -1f32), 0.5, Box::new(MetalMaterial::new(Vector3::new(0.8, 0.6, 0.2), 0.5)))),
-    //     Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), 0.5, Box::new(DialetricMaterial::new(1.5)))),
-    //     Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), -0.45, Box::new(DialetricMaterial::new(1.5)))),
+    // let list:Vec<Box<Hitable>> = vec![
+    //      Box::new(Sphere::new(Vector3::new(-sphere_radius, 0f32, -1f32), sphere_radius, Box::new(LambertarianMaterial::new(Vector3::new(0.0, 0.0, 1.0))))),
+    //      Box::new(Sphere::new(Vector3::new(sphere_radius, 0f32, -1f32), sphere_radius, Box::new(LambertarianMaterial::new(Vector3::new(1.0, 0.0, 0.0))))),
     // ];
 
+    let list: Vec<Box<Hitable>> = vec![
+        Box::new(Sphere::new(Vector3::new(0f32, 0f32, -1f32), 0.5, Box::new(LambertarianMaterial::new(Vector3::new(0.0, 0.0, 1.0))))),
+        Box::new(Sphere::new(Vector3::new(0f32, -100.5, -1f32), 100f32, Box::new(LambertarianMaterial::new(Vector3::new(0.8, 0.8, 0.0))))),
+        Box::new(Sphere::new(Vector3::new(1f32, 0f32, -1f32), 0.5, Box::new(MetalMaterial::new(Vector3::new(0.8, 0.6, 0.2), 0.5)))),
+        Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), 0.5, Box::new(DialetricMaterial::new(1.5)))),
+        Box::new(Sphere::new(Vector3::new(-1f32, 0f32, -1f32), -0.45, Box::new(DialetricMaterial::new(1.5)))),
+    ];
+
     let world = HitableList::new(list);
-    let camera = Camera::new(90f32, num_rows as f32 / num_cols as f32);
+    let aspect_ratio = num_rows as f32 / num_cols as f32;
+    let camera = Camera::new(Vector3::new(-2.0, 2.0, 1.0), Vector3::new(0.0, 0.0, -1.0), Vector3::new(0.0, 1.0, 0.0), 45.0, aspect_ratio);
 
     println!("P3\n{} {}\n255", num_rows, num_cols);
     for y in (0..num_cols).rev() {
