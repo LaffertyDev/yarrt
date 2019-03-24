@@ -91,7 +91,7 @@ impl Vector3 {
         Vector3 {
             e0: self.e1 * other.e2 - self.e2 * other.e1,
             e1: -(self.e0 * other.e2 - self.e2 * other.e0),
-            e2: self.e0 * other.e1 - other.e1 * self.e0
+            e2: self.e0 * other.e1 - self.e1 * other.e0
         }
     }
 
