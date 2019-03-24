@@ -4,6 +4,8 @@ This is built using Peter Shirley's [Raytracing in a Weekend](https://github.com
 
 Adapted into Rust.
 
+![Generated Scene](./images/raytraced_random_scene.jpg "Generated Scene")
+
 ## Data Structure
 
 One significant divergance that all Rust Raytracers have is in the data structure. The guide has a recursive structure:
