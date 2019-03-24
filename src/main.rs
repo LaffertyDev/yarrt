@@ -42,8 +42,8 @@ fn color(ray: &Ray, world: &HitableList, depth: i32) -> Vector3 {
 }
 
 fn main() {
-    let num_rows = 200;
-    let num_cols = 100;
+    let num_rows = 1920 * 2;
+    let num_cols = 1080 * 2;
     let num_aa_samples = 100;
     eprintln!("Generating scene");
     let world = scene::random_scene();

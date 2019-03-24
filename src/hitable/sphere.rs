@@ -83,3 +83,34 @@ impl Hitable for Sphere {
         return None;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::DialetricMaterial;
+    use super::*;
+
+    #[test]
+    fn hitable_collides() {
+        let ray = Ray::new(Vector3::new(0.0, 0.0, 0.0), Vector3::new(1.0, 0.0, 0.0));
+        let sphere = Sphere::new(Vector3::new(5.0, 0.0, 0.0), 1.0, Box::new(DialetricMaterial::new(1.0)));
+
+        let result = sphere.hit(&ray, 0.001, 10.0);
+        
+        assert!(result.is_some());
+        let hit_record = result.unwrap();
+        assert_eq!(Vector3::new(4.0, 0.0, 0.0), hit_record.point);
+        assert_eq!(4.0, hit_record.hit_at);
+        assert_eq!(Vector3::new(-1.0, 0.0, 0.0), hit_record.normal);
+        //assert_eq!(sphere.material, hit_record.material);
+    }
+
+    #[test]
+    fn hitable_doesnotcollide() {
+        let ray = Ray::new(Vector3::new(0.0, 0.0, 0.0), Vector3::new(-1.0, 0.0, 0.0));
+        let sphere = Sphere::new(Vector3::new(5.0, 0.0, 0.0), 1.0, Box::new(DialetricMaterial::new(1.0)));
+
+        let result = sphere.hit(&ray, 0.001, 10.0);
+        
+        assert!(result.is_none());
+    }
+}
