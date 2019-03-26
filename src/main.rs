@@ -21,13 +21,13 @@ use rand::prelude::*;
 /// If it hit, and we have reached the max hit-depth, the "base-color" is solid black (0,0,0)
 /// If it did not hit, then the Ray has reflected into the background
 /// 
-/// Depth is the "Current Depth" of the recursive color
-fn color(ray: &Ray, world: &HitableList, depth: i32) -> Vector3 {
+/// current_depth is the number of times this Ray has bounced off of something
+fn color(ray: &Ray, world: &HitableList, current_depth: u32, max_depth: u32) -> Vector3 {
     // 0.001 to correct for rays bouncing off at minimal floats (0.00000000001)
     if let Some(hit_record) = world.hit(&ray, 0.001, std::f32::MAX) {
-        if depth < 50 {
+        if current_depth < max_depth {
             if let Some(scatter_material) = hit_record.material.scatter(ray, &hit_record) {
-                return scatter_material.albedo * color(&scatter_material.ray, world, depth + 1);
+                return scatter_material.albedo * color(&scatter_material.ray, world, current_depth + 1, max_depth);
             }
         }
 
@@ -42,9 +42,10 @@ fn color(ray: &Ray, world: &HitableList, depth: i32) -> Vector3 {
 }
 
 fn main() {
-    let num_rows = 1920 * 2;
-    let num_cols = 1080 * 2;
+    let num_rows = 200;
+    let num_cols = 100;
     let num_aa_samples = 100;
+    let max_depth = 50;
     eprintln!("Generating scene");
     let world = scene::random_scene();
     eprintln!("Generated scene");
@@ -63,7 +64,7 @@ fn main() {
                 let u = (x as f32 + random::<f32>()) / num_rows as f32;
                 let v = (y as f32 + random::<f32>()) / num_cols as f32;
                 let ray = camera.get_ray(u, v);
-                let color = self::color(&ray, &world, 0i32);
+                let color = self::color(&ray, &world, 0, max_depth);
                 aa_pixel += color;
             }
 
