@@ -2,38 +2,45 @@
 
 This is built using Peter Shirley's [Raytracing in a Weekend](https://github.com/petershirley/raytracinginoneweekend)
 
-Adapted into Rust.
+Adapted into Rust. Built to learn about raytracing and build a nontrivial program in Rust. This is a purely academic program with no "real" applications.
+
+## Example Generated File
 
 ![Generated Scene](./images/raytraced_random_scene.jpg "Generated Scene")
 
-## Data Structure
+Scene took ~1 hour to generate using a release build.
 
-One significant divergance that all Rust Raytracers have is in the data structure. The guide has a recursive structure:
+## Compiling and Running
 
-`World` owns `Hitables` which owns `Materials`. When a ray creates a `HitRecord` (when it collides with an object) that `HitRecord` must know about the `Material` that it hit.
+Requirements are to have Rust and Cargo installed. Rustup will manage this for you. Download the git project, then...
+Test: `cargo test`
+Run: `cargo build --release > output.ppm`
 
-In Rust this doesn't work because of very strict ownership rules. There's a few ways to design the structure:
+## Future Improvements
 
-1. ECS
+There's a lot of things I could do to improve raytracer.
 
-Build a loosely connected structure of entities related by some `Id`. The `EntityStore` is implemented in HashMaps to make lookups quick and painless. The `EntityStore` owns all references and data structures simply contain the Ids to the Entities.
-
-We load all of the Geometry and Materials into their related entities, and then we have a single "System" responsible for casting rays. When we go to create a "HitRecord" we simply store the Ids to the entities necessary.
-
-2. Lifetimes
-
-Unique to Rust (and to help with Ownership) we can specify non-mutable references. Since none of our created entities (`Hitables` and `Materials`) actually mutate after creation, we could use read-only references in the `HitRecord` structure. To do *that*, we would need to specify a `HitRecord` has the same lifetime as a `Ray`.
-
-## Todo
+Improvements to Rust Code:
 
 1. Ray could take a reference to the Origin
 2. Rename "Hitable" to "Geometry"
 3. Move main code to a lib function
 4. add input arguments to the main for camera settings
+  camera position & orientation, aspect ratio, resolution, max_ray_depth, 
 5. Maybe add in scene loading to render a blender scene file?
-6. multithreaded to speed processing
 
-Book-recommended improvements
+For multithreaded support I'm pretty sure this wouldn't be too difficult. The book recommends to run N copies on the same scene & randomize the results. This would be good to simulate real "light" but isn't going to speed up the compilation times.
+
+Improvements to Performance:
+
+1. multithreaded ray tracing
+  Run a thread per X,Y ray. Should decrease execution time linearly
+2. simplify random disk/sphere generation to only generate once within a unit-vector
+  Currently we generate until we have a unit sphere or disk in these cases. We could generate once to remove the slow loop process.
+3. Run 
+
+Improvements to Raytracer:
+
 1. lighting
 2. triangle geometry support
 3. textures

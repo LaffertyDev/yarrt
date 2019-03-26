@@ -37,7 +37,7 @@ pub fn random_scene() -> HitableList{
         }
     }
 
-
+    // Add three bigger spheres because they look cool
     list.push(Box::new(Sphere::new(Vector3::new(0.0, 1.0, 0.0), 1.0, Box::new(DialetricMaterial::new(1.5)))));
     list.push(Box::new(Sphere::new(Vector3::new(-4.0, 1.0, 0.0), 1.0, Box::new(LambertarianMaterial::new(Vector3::new(0.4, 0.2, 0.1))))));
     list.push(Box::new(Sphere::new(Vector3::new(4.0, 1.0, 0.0), 1.0, Box::new(MetalMaterial::new(Vector3::new(0.7, 0.6, 0.5), 0.0)))));
