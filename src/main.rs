@@ -56,7 +56,7 @@ fn raytracer(num_rows: u32, num_cols: u32, num_aa_samples: u32, max_ray_depth: u
     for y in (0..num_cols).rev() {
         for x in 0..num_rows {
             let mut aa_pixel = Vector3::new(0.0, 0.0, 0.0);
-            for _s in 0..num_aa_samples {
+            for _ in 0..num_aa_samples {
                 let u = (x as f32 + random::<f32>()) / num_rows as f32;
                 let v = (y as f32 + random::<f32>()) / num_cols as f32;
                 let ray = camera.get_ray(u, v);
