@@ -23,11 +23,10 @@ There's a lot of things I could do to improve raytracer.
 Improvements to Rust Code:
 
 1. Ray could take a reference to the Origin
-2. Rename "Hitable" to "Geometry"
-3. Move main code to a lib function
-4. add input arguments to the main for camera settings
+2. Move main code to a lib function
+3. add input arguments to the main for camera settings
   camera position & orientation, aspect ratio, resolution, max_ray_depth, 
-5. Maybe add in scene loading to render a blender scene file?
+4. Maybe add in scene loading to render a blender scene file?
 
 For multithreaded support I'm pretty sure this wouldn't be too difficult. The book recommends to run N copies on the same scene & randomize the results. This would be good to simulate real "light" but isn't going to speed up the compilation times.
 
@@ -37,7 +36,6 @@ Improvements to Performance:
   Run a thread per X,Y ray. Should decrease execution time linearly
 2. simplify random disk/sphere generation to only generate once within a unit-vector
   Currently we generate until we have a unit sphere or disk in these cases. We could generate once to remove the slow loop process.
-3. Run 
 
 Improvements to Raytracer:
 
