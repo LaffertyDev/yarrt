@@ -6,7 +6,10 @@ use crate::Vector3;
 
 use rand::prelude::*;
 
+/// Dialetric materials are like Water -- they both reflect and refract
 pub struct DialetricMaterial {
+    /// https://en.wikipedia.org/wiki/Refractive_index 
+    /// Higher values yields more severe "refraction" or sharper angles for the rays going into the material
     refractive_index: f32,
 }
 
@@ -29,8 +32,6 @@ impl DialetricMaterial {
     }
 }
 
-/// Dialetric materials are like Water -- they both reflect and refract
-/// 
 /// First priority is finding the "Normal that points outward" from the source of light
 /// Then we compute the refraction using Schnell's law
 /// Then we determine if we want to return the reflection or the refraction

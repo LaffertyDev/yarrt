@@ -7,7 +7,7 @@ use crate::Vector3;
 /// Lambertarian are "Matte" materials meaning minimal reflectivity
 pub struct LambertarianMaterial {
     /// Albedo is how much energy is "absorbed" by the material
-    /// Higher albedo means less absorbtion
+    /// Higher albedo means less absorption
     albedo: Vector3,
 }
 
