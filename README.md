@@ -13,8 +13,9 @@ Scene took ~1 hour to generate using a release build.
 ## Compiling and Running
 
 Requirements are to have Rust and Cargo installed. Rustup will manage this for you. Download the git project, then...
-Test: `cargo test` 
-Run: `cargo build --release > output.ppm` 
+
+- Test: `cargo test` 
+- Run: `cargo build --release > output.ppm` 
 
 ## Future Improvements
 
