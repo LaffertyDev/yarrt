@@ -41,11 +41,7 @@ fn color(ray: &Ray, world: &HitableList, current_depth: u32, max_depth: u32) -> 
     }
 }
 
-fn main() {
-    let num_rows = 200;
-    let num_cols = 100;
-    let num_aa_samples = 100;
-    let max_depth = 50;
+fn raytracer(num_rows: u32, num_cols: u32, num_aa_samples: u32, max_ray_depth: u32, camera_aperture: f32, camera_vfov: f32, camera_focus_distance: f32) {
     eprintln!("Generating scene");
     let world = scene::random_scene();
     eprintln!("Generated scene");
@@ -53,8 +49,8 @@ fn main() {
     let look_from = Vector3::new(13.0, 2.0, 3.0);
     let look_at = Vector3::new(0.0, 0.0, 0.0);
     let v_up = Vector3::new(0.0, 1.0, 0.0);
-    let focus_distance = 10f32;
-    let camera = Camera::new(look_from, look_at, v_up, 20.0, aspect_ratio, 0.1, focus_distance);
+
+    let camera = Camera::new(look_from, look_at, v_up, camera_vfov, aspect_ratio, camera_aperture, camera_focus_distance);
 
     println!("P3\n{} {}\n255", num_rows, num_cols);
     for y in (0..num_cols).rev() {
@@ -64,7 +60,7 @@ fn main() {
                 let u = (x as f32 + random::<f32>()) / num_rows as f32;
                 let v = (y as f32 + random::<f32>()) / num_cols as f32;
                 let ray = camera.get_ray(u, v);
-                let color = self::color(&ray, &world, 0, max_depth);
+                let color = self::color(&ray, &world, 0, max_ray_depth);
                 aa_pixel += color;
             }
 
@@ -81,4 +77,15 @@ fn main() {
         eprintln!("{}% done", percent_done);
     }
     eprintln!("Finished generating raytraced image with dimensions X: {}, Y: {}", num_rows, num_cols);
+}
+
+fn main() {
+    let num_rows = 200;
+    let num_cols = 100;
+    let num_aa_samples = 100;
+    let max_depth = 50;
+    let camera_fov = 20.0;
+    let camera_focus_distance = 10.0;
+    let aperture = 0.1;
+    self::raytracer(num_rows, num_cols, num_aa_samples, max_depth, aperture, camera_fov, camera_focus_distance);
 }
